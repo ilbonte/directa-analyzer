@@ -90,9 +90,11 @@
                 const portfolioData = [];
                 const movimentiData = [];
 
+                //todo: find the numbers of lines to skip
                 lines.slice(6).forEach(line => {
                     const columns = line.split(',');
 
+                    // todo: decidere se tenere questo oppure no
                     if (columns[0] && columns[0].trim().match(/^\d{2}\/\d{2}\/\d{4}$/)) {
                         portfolioData.push({
                             date: columns[0].trim(),
@@ -109,6 +111,9 @@
                     }
                 });
 
+                //todo: aggiungere warnings se non riesce a parsare il file
+                //todo: che corner case ci possono essere?
+
                 resolve({
                     portfolioData: portfolioData,
                     movimentiData: movimentiData
@@ -119,6 +124,7 @@
     }
 
     function alignMovementDates(portfolioData, movimentiData) {
+        // todo: controllare cosa succede se ho più movimenti simili in date vicine o lo stesso giorno
         const windowDays = 3;
         const alignedMovements = [];
 
@@ -166,7 +172,7 @@
         const dailyGains = [];
         let previousPatrimonio = null;
 
-        portfolioData.forEach((day, index) => {
+        portfolioData.forEach((day) => {
             if (previousPatrimonio !== null) {
                 const currentPatrimonio = day.patrimonio;
                 const movimentiGiorno = alignedMovements
@@ -204,7 +210,6 @@
         }
 
         const ctx = document.getElementById('gainLossChart');
-        console.log('googo');
         chart = new Chart(ctx, {
             type: 'line',
             data: {
@@ -217,7 +222,7 @@
                 }]
             },
             options: {
-                pointStyle: 'false',
+                pointStyle: false,
                 responsive: true,
                 maintainAspectRatio: false,
                 scales: {
