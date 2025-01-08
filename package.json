@@ -1,0 +1,17 @@
+{
+  "name": "directa-analyzer",
+  "version": "1.0.0",
+  "description": "WIP :)",
+  "main": "portfolio.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^29.7.0"
+  },
+    "type": "module"
+
+}

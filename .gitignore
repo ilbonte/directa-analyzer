@@ -1,3 +1,4 @@
 .idea
 *.csv
 todo.md
+node_modules
