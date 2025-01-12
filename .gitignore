@@ -1,4 +1,5 @@
 .idea
 *.csv
 todo.md
+prompts.md
 node_modules
