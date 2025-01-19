@@ -23,6 +23,27 @@
 
     <!-- Results Section -->
     <div id="results" style="display:none;">
+        <div class="card mb-4" id="dateRange" style="display:none;">
+            <div class="card-body">
+                <h5 class="card-title">Periodo di Analisi</h5>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="startDate" class="form-label">Data Iniziale</label>
+                        <input type="date" class="form-control" id="startDate">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="endDate" class="form-label">Data Finale</label>
+                        <input type="date" class="form-control" id="endDate">
+                    </div>
+                </div>
+                <div class="text-end">
+                    <button id="resetDates" class="btn btn-secondary" style="display:none;">
+                        Reset Date
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <!-- Overall Stats -->
         <div class="row">
             <div class="col-md-6">
@@ -35,27 +56,9 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="card mb-4">
-                    <div class="card-header">
-                        <h5 class="card-title mb-0">Statistiche Aggiuntive</h5>
-                    </div>
-                    <div class="card-body">
-                        <div id="additionalStats"></div>
-                    </div>
-                </div>
-            </div>
+
         </div>
 
-        <!-- Yearly Stats -->
-        <div class="card mb-4">
-            <div class="card-header">
-                <h5 class="card-title mb-0">Statistiche Annuali</h5>
-            </div>
-            <div class="card-body">
-                <div id="yearlyStats"></div>
-            </div>
-        </div>
 
         <!-- Cumulative Gain/Loss Chart -->
         <div class="card mb-4">
@@ -73,24 +76,83 @@
 
 <script src="./portfolio.js"></script>
 <script>
+   let globalPortfolioData = [];
+let globalMovimentiData = [];
 
+function getMinMaxDates() {
+    const dates = globalPortfolioData.map(d => new Date(d.date.split('/').reverse().join('-')));
+    return {
+        minDate: new Date(Math.min(...dates)).toISOString().split('T')[0],
+        maxDate: new Date(Math.max(...dates)).toISOString().split('T')[0]
+    };
+}
 
+$('#csvFile').change(async function (e) {
+    const file = e.target.files[0];
+    const data = await parseCSV(file);
+    globalPortfolioData = data.portfolioData;
+    globalMovimentiData = data.movimentiData;
 
-    $('#csvFile').change(async function (e) {
-        const file = e.target.files[0];
-        const data = await parseCSV(file);
-        const alignedMovements = alignMovementDates(data.portfolioData, data.movimentiData);
-        const stats = calculateStats(data.portfolioData, alignedMovements);
-        displayResults(stats);
+    const { minDate, maxDate } = getMinMaxDates();
+
+    $('#startDate')
+        .val(minDate)
+        .attr('min', minDate)
+        .attr('max', maxDate);
+
+    $('#endDate')
+        .val(maxDate)
+        .attr('min', minDate)
+        .attr('max', maxDate);
+
+    $('#dateRange').show();
+    updateAnalysis();
+});
+
+// Event listener per i datepicker
+$('#startDate, #endDate').change(function() {
+    const { minDate, maxDate } = getMinMaxDates();
+    const currentStartDate = $('#startDate').val();
+    const currentEndDate = $('#endDate').val();
+
+    // Mostra il pulsante di reset solo se le date sono diverse da quelle min/max
+    if (currentStartDate !== minDate || currentEndDate !== maxDate) {
+        $('#resetDates').show();
+    } else {
+        $('#resetDates').hide();
+    }
+
+    updateAnalysis();
+});
+
+// Event listener per il pulsante di reset
+$('#resetDates').click(function() {
+    const { minDate, maxDate } = getMinMaxDates();
+    $('#startDate').val(minDate);
+    $('#endDate').val(maxDate);
+    $('#resetDates').hide();
+    updateAnalysis();
+});
+
+// Aggiorna la chiamata in updateAnalysis
+function updateAnalysis() {
+    const startDate = new Date($('#startDate').val());
+    const endDate = new Date($('#endDate').val());
+
+    const filteredPortfolioData = globalPortfolioData.filter(d => {
+        const date = new Date(d.date.split('/').reverse().join('-'));
+        return date >= startDate && date <= endDate;
     });
 
-    // Add resize handler
-    window.addEventListener('resize', function () {
-        if (chart) {
-            chart.resize();
-        }
+    const filteredMovimentiData = globalMovimentiData.filter(d => {
+        const date = new Date(d.date.split('/').reverse().join('-'));
+        return date >= startDate && date <= endDate;
     });
 
+    const alignedMovements = alignMovementDates(filteredPortfolioData, filteredMovimentiData);
+    const stats = calculateStats(filteredPortfolioData, alignedMovements);
+    displayResults(stats, alignedMovements); // Passa anche alignedMovements
+}
 </script>
 </body>
 </html>

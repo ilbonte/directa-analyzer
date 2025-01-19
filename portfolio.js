@@ -48,6 +48,8 @@ function alignMovementDates(portfolioData, movimentiData) {
     return alignedMovements;
 }
 
+
+
 function calculateStats(portfolioData, alignedMovements) {
     let cumulativeGainLoss = 0;
     const dailyGains = [];
@@ -68,7 +70,6 @@ function calculateStats(portfolioData, alignedMovements) {
             dailyGains.push({
                 date: day.date,
                 gainLoss: gainLoss,
-                gainLossPerc: previousPatrimonio !== 0 ? (gainLoss / previousPatrimonio) * 100 : 0,
                 cumulativeGainLoss: cumulativeGainLoss
             });
         }
@@ -117,29 +118,15 @@ function updateChart(dailyGains) {
 }
 
 function displayResults(stats) {
-    const rendimentoTotale = ((stats.patrimonyFinal - stats.totalMovements - stats.patrimonyInitial) /
-        stats.patrimonyInitial * 100);
+
 
     $('#totalStats').html(`
         <p>Patrimonio iniziale: ${stats.patrimonyInitial.toFixed(2)} €</p>
         <p>Patrimonio finale: ${stats.patrimonyFinal.toFixed(2)} €</p>
         <p>Totale movimenti: ${stats.totalMovements.toFixed(2)} €</p>
         <p>Gain/Loss totale: ${stats.totalGainLoss.toFixed(2)} €</p>
-        <p>Rendimento totale: ${rendimentoTotale.toFixed(2)}%</p>
     `);
 
-    const gainLossValues = stats.dailyGains.map(day => day.gainLoss);
-    const mean = gainLossValues.reduce((a, b) => a + b, 0) / gainLossValues.length;
-    const std = Math.sqrt(gainLossValues.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / gainLossValues.length);
-    const positiveCount = gainLossValues.filter(v => v > 0).length;
-    const negativeCount = gainLossValues.filter(v => v < 0).length;
-
-    $('#additionalStats').html(`
-        <p>Media gain/loss giornaliero: ${mean.toFixed(2)} €</p>
-        <p>Deviazione standard gain/loss: ${std.toFixed(2)} €</p>
-        <p>Giorni positivi: ${positiveCount}</p>
-        <p>Giorni negativi: ${negativeCount}</p>
-    `);
 
     updateChart(stats.dailyGains);
     $('#results').show();
