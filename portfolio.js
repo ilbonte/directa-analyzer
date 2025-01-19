@@ -156,15 +156,16 @@ function updateChart(dailyGains) {
 
 function displayResults(stats) {
     $('#totalStats').html(`
-        <p>Patrimonio iniziale: ${stats.patrimonyInitial.toFixed(2)} €</p>
-        <p>Patrimonio finale: ${stats.patrimonyFinal.toFixed(2)} €</p>
-        <p>Totale movimenti: ${stats.totalMovements.toFixed(2)} €</p>
-        <p>Gain/Loss totale: ${stats.totalGainLoss.toFixed(2)} €</p>
+        <p>Patrimonio iniziale: ${formatCurrency(stats.patrimonyInitial)}</p>
+        <p>Patrimonio finale: ${formatCurrency(stats.patrimonyFinal)}</p>
+        <p>Totale movimenti: ${formatCurrency(stats.totalMovements)}</p>
+        <p>Gain/Loss totale: ${formatCurrency(stats.totalGainLoss)}</p>
     `);
 
     updateChart(stats.dailyGains);
     $('#results').show();
 }
+
 
 function parseCSV(file) {
     return new Promise((resolve) => {
@@ -208,6 +209,16 @@ function parseCSV(file) {
         reader.readAsText(file);
     });
 }
+
+function formatCurrency(value) {
+    return new Intl.NumberFormat('it-IT', {
+        style: 'currency',
+        currency: 'EUR',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    }).format(value);
+}
+
 
 console.log('portfolio.js loaded');
 if (typeof module !== "undefined" && module.exports) {
