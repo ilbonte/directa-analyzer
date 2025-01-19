@@ -52,25 +52,29 @@ function alignMovementDates(portfolioData, movimentiData) {
 
 function calculateStats(portfolioData, alignedMovements) {
     let cumulativeGainLoss = 0;
+    let cumulativeInvestment = 0;
     const dailyGains = [];
+
     let previousPatrimonio = null;
 
     portfolioData.forEach((day) => {
+        // Aggiorna il cumulativo degli investimenti per il giorno corrente
+        const movimentiGiorno = alignedMovements
+            .filter(m => m.date === day.date)
+            .reduce((sum, m) => sum + m.value, 0);
+        cumulativeInvestment += movimentiGiorno;
+
         if (previousPatrimonio !== null) {
             const currentPatrimonio = day.patrimonio;
-            const movimentiGiorno = alignedMovements
-                .filter(m => m.date === day.date)
-                .reduce((sum, m) => sum + m.value, 0);
-
             const diffPatrimonio = currentPatrimonio - previousPatrimonio;
             const gainLoss = diffPatrimonio - movimentiGiorno;
-
             cumulativeGainLoss += gainLoss;
 
             dailyGains.push({
                 date: day.date,
                 gainLoss: gainLoss,
-                cumulativeGainLoss: cumulativeGainLoss
+                cumulativeGainLoss: cumulativeGainLoss,
+                cumulativeInvestment: cumulativeInvestment
             });
         }
         previousPatrimonio = day.patrimonio;
@@ -79,12 +83,12 @@ function calculateStats(portfolioData, alignedMovements) {
     return {
         dailyGains,
         totalGainLoss: cumulativeGainLoss,
+        totalInvestments: cumulativeInvestment,
         patrimonyInitial: portfolioData[0].patrimonio,
         patrimonyFinal: portfolioData[portfolioData.length - 1].patrimonio,
         totalMovements: alignedMovements.reduce((sum, m) => sum + m.value, 0)
     };
 }
-
 let chart = null;
 
 function updateChart(dailyGains) {
@@ -97,36 +101,66 @@ function updateChart(dailyGains) {
         type: 'line',
         data: {
             labels: dailyGains.map(day => day.date),
-            datasets: [{
-                label: 'Gain/Loss Cumulativo',
-                data: dailyGains.map(day => day.cumulativeGainLoss),
-                borderColor: 'rgb(75, 192, 192)',
-                tension: 0.1
-            }]
+            datasets: [
+                {
+                    label: 'Gain/Loss Cumulativo',
+                    data: dailyGains.map(day => day.cumulativeGainLoss),
+                    borderColor: 'rgb(75, 192, 192)',
+                    tension: 0.1,
+                    yAxisID: 'y'
+                },
+                {
+                    label: 'Investimenti Cumulativi',
+                    data: dailyGains.map(day => day.cumulativeInvestment),
+                    borderColor: 'rgb(255, 99, 132)',
+                    tension: 0.1,
+                    yAxisID: 'y1'
+                }
+            ]
         },
         options: {
             pointStyle: false,
             responsive: true,
             maintainAspectRatio: false,
+            interaction: {
+                mode: 'index',
+                intersect: false,
+            },
             scales: {
                 y: {
-                    beginAtZero: true
+                    type: 'linear',
+                    display: true,
+                    position: 'left',
+                    title: {
+                        display: true,
+                        text: 'Gain/Loss (€)'
+                    }
+                },
+                y1: {
+                    type: 'linear',
+                    display: true,
+                    position: 'right',
+                    title: {
+                        display: true,
+                        text: 'Investimenti (€)'
+                    },
+                    grid: {
+                        drawOnChartArea: false
+                    }
                 }
             }
         }
     });
 }
 
+
 function displayResults(stats) {
-
-
     $('#totalStats').html(`
         <p>Patrimonio iniziale: ${stats.patrimonyInitial.toFixed(2)} €</p>
         <p>Patrimonio finale: ${stats.patrimonyFinal.toFixed(2)} €</p>
         <p>Totale movimenti: ${stats.totalMovements.toFixed(2)} €</p>
         <p>Gain/Loss totale: ${stats.totalGainLoss.toFixed(2)} €</p>
     `);
-
 
     updateChart(stats.dailyGains);
     $('#results').show();
