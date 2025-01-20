@@ -174,40 +174,71 @@ function parseCSV(file) {
             const csv = event.target.result;
             const lines = csv.split('\n');
 
+            // Determina se il CSV ha l'header nella prima riga o dopo i metadati
+            const headerIndex = findHeaderIndex(lines);
+            if (headerIndex === -1) {
+                resolve({
+                    error: "Formato CSV non valido: impossibile trovare l'header",
+                    portfolioData: [],
+                    movimentiData: []
+                });
+                return;
+            }
+
             const portfolioData = [];
             const movimentiData = [];
+            const warnings = [];
 
-            //todo: find the numbers of lines to skip
-            lines.slice(6).forEach(line => {
+            // Processa le righe dopo l'header
+            lines.slice(headerIndex + 1).forEach((line, index) => {
+                if (!line.trim()) return; // Salta le righe vuote
+
                 const columns = line.split(',');
 
-                // todo: decidere se tenere questo oppure no
-                if (columns[0] && columns[0].trim().match(/^\d{2}\/\d{2}\/\d{4}$/)) {
-                    portfolioData.push({
-                        date: columns[0].trim(),
-                        liquidita: parseItalianNumber(columns[1]),
-                        patrimonio: parseItalianNumber(columns[6])
-                    });
-                }
+                try {
+                    // Parsing del portfolio
+                    if (columns[0] && columns[0].trim().match(/^\d{2}\/\d{2}\/\d{4}$/)) {
+                        portfolioData.push({
+                            date: columns[0].trim(),
+                            liquidita: parseItalianNumber(columns[1]),
+                            patrimonio: parseItalianNumber(columns[6])
+                        });
+                    }
 
-                if (columns[8] && columns[8].trim().match(/^\d{2}\/\d{2}\/\d{4}$/)) {
-                    movimentiData.push({
-                        date: columns[8].trim(),
-                        value: parseItalianNumber(columns[10])
-                    });
+                    // Parsing dei movimenti
+                    if (columns[8] && columns[8].trim().match(/^\d{2}\/\d{2}\/\d{4}$/)) {
+                        movimentiData.push({
+                            date: columns[8].trim(),
+                            value: parseItalianNumber(columns[10])
+                        });
+                    }
+                } catch (error) {
+                    warnings.push(`Errore nel parsing della riga ${index + headerIndex + 2}: ${error.message}`);
                 }
             });
 
-            //todo: aggiungere warnings se non riesce a parsare il file
-            //todo: che corner case ci possono essere?
-
             resolve({
-                portfolioData: portfolioData,
-                movimentiData: movimentiData
+                portfolioData,
+                movimentiData,
+                warnings,
+                headerIndex
             });
         };
         reader.readAsText(file);
     });
+}
+
+function findHeaderIndex(lines) {
+    const headerPattern = /^Data,Liquidità,Finanaziamento long,Garanzia short,Portafoglio,Margini compnensati,Patrimonio/i;
+
+    // Cerca l'header in tutte le righe
+    for (let i = 0; i < lines.length; i++) {
+        if (headerPattern.test(lines[i].trim())) {
+            return i;
+        }
+    }
+
+    return -1; // Header non trovato
 }
 
 function formatCurrency(value) {
