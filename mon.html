@@ -19,11 +19,8 @@
             <h5 class="card-title">Carica CSV</h5>
             <input type="file" class="form-control" id="csvFile" accept=".csv">
         </div>
-    </div>
 
-    <!-- Results Section -->
-    <div id="results" style="display:none;">
-        <div class="card mb-4" id="dateRange" style="display:none;">
+        <div class="mb-4" id="dateRange" style="display:none;">
             <div class="card-body">
                 <h5 class="card-title">Periodo di Analisi</h5>
                 <div class="row">
@@ -44,6 +41,10 @@
             </div>
         </div>
 
+    </div>
+
+    <!-- Results Section -->
+    <div class="results" style="display:none;">
         <!-- Overall Stats -->
         <div class="row">
             <div class="col-md-6">
@@ -74,85 +75,110 @@
     </div>
 </div>
 
+<!-- Modal Error -->
+<div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>
+                    <h5 class="modal-title" id="errorModalLabel">Errore Rilevato.</h5>
+                    <p>Fai uno screenshot e riportalo allo sviluppatore</p>
+                    <p>Nel frattempo assicurati di aver seguito correttamente le istuzioni fornite</p>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="errorMessage"></p>
+                <small id="errorStack" style="white-space: pre-wrap;"></small>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <script src="./portfolio.js"></script>
+<script src="./error-catcher.js"></script>
 <script>
-   let globalPortfolioData = [];
-let globalMovimentiData = [];
+    let globalPortfolioData = [];
+    let globalMovimentiData = [];
 
-function getMinMaxDates() {
-    const dates = globalPortfolioData.map(d => new Date(d.date.split('/').reverse().join('-')));
-    return {
-        minDate: new Date(Math.min(...dates)).toISOString().split('T')[0],
-        maxDate: new Date(Math.max(...dates)).toISOString().split('T')[0]
-    };
-}
-
-$('#csvFile').change(async function (e) {
-    const file = e.target.files[0];
-    const data = await parseCSV(file);
-    globalPortfolioData = data.portfolioData;
-    globalMovimentiData = data.movimentiData;
-
-    const { minDate, maxDate } = getMinMaxDates();
-
-    $('#startDate')
-        .val(minDate)
-        .attr('min', minDate)
-        .attr('max', maxDate);
-
-    $('#endDate')
-        .val(maxDate)
-        .attr('min', minDate)
-        .attr('max', maxDate);
-
-    $('#dateRange').show();
-    updateAnalysis();
-});
-
-// Event listener per i datepicker
-$('#startDate, #endDate').change(function() {
-    const { minDate, maxDate } = getMinMaxDates();
-    const currentStartDate = $('#startDate').val();
-    const currentEndDate = $('#endDate').val();
-
-    // Mostra il pulsante di reset solo se le date sono diverse da quelle min/max
-    if (currentStartDate !== minDate || currentEndDate !== maxDate) {
-        $('#resetDates').show();
-    } else {
-        $('#resetDates').hide();
+    function getMinMaxDates() {
+        const dates = globalPortfolioData.map(d => new Date(d.date.split('/').reverse().join('-')));
+        return {
+            minDate: new Date(Math.min(...dates)).toISOString().split('T')[0],
+            maxDate: new Date(Math.max(...dates)).toISOString().split('T')[0]
+        };
     }
 
-    updateAnalysis();
-});
+    $('#csvFile').change(async function (e) {
+        const file = e.target.files[0];
+        const data = await parseCSV(file);
+        globalPortfolioData = data.portfolioData;
+        globalMovimentiData = data.movimentiData;
 
-// Event listener per il pulsante di reset
-$('#resetDates').click(function() {
-    const { minDate, maxDate } = getMinMaxDates();
-    $('#startDate').val(minDate);
-    $('#endDate').val(maxDate);
-    $('#resetDates').hide();
-    updateAnalysis();
-});
+        const {minDate, maxDate} = getMinMaxDates();
 
-// Aggiorna la chiamata in updateAnalysis
-function updateAnalysis() {
-    const startDate = new Date($('#startDate').val());
-    const endDate = new Date($('#endDate').val());
+        $('#startDate')
+            .val(minDate)
+            .attr('min', minDate)
+            .attr('max', maxDate);
 
-    const filteredPortfolioData = globalPortfolioData.filter(d => {
-        const date = new Date(d.date.split('/').reverse().join('-'));
-        return date >= startDate && date <= endDate;
+        $('#endDate')
+            .val(maxDate)
+            .attr('min', minDate)
+            .attr('max', maxDate);
+
+        $('#dateRange').show();
+        updateAnalysis();
     });
 
-    const filteredMovimentiData = globalMovimentiData.filter(d => {
-        const date = new Date(d.date.split('/').reverse().join('-'));
-        return date >= startDate && date <= endDate;
+    // Event listener per i datepicker
+    $('#startDate, #endDate').change(function () {
+        const {minDate, maxDate} = getMinMaxDates();
+        const currentStartDate = $('#startDate').val();
+        const currentEndDate = $('#endDate').val();
+
+        // Mostra il pulsante di reset solo se le date sono diverse da quelle min/max
+        if (currentStartDate !== minDate || currentEndDate !== maxDate) {
+            $('#resetDates').show();
+        } else {
+            $('#resetDates').hide();
+        }
+
+        updateAnalysis();
     });
 
-    const alignedMovements = alignMovementDates(filteredPortfolioData, filteredMovimentiData);
-    const stats = calculateStats(filteredPortfolioData, alignedMovements);
-    displayResults(stats, alignedMovements); // Passa anche alignedMovements
-}
+    // Event listener per il pulsante di reset
+    $('#resetDates').click(function () {
+        const {minDate, maxDate} = getMinMaxDates();
+        $('#startDate').val(minDate);
+        $('#endDate').val(maxDate);
+        $('#resetDates').hide();
+        updateAnalysis();
+    });
+
+    // Aggiorna la chiamata in updateAnalysis
+    function updateAnalysis() {
+        const startDate = new Date($('#startDate').val());
+        const endDate = new Date($('#endDate').val());
+
+        const filteredPortfolioData = globalPortfolioData.filter(d => {
+            const date = new Date(d.date.split('/').reverse().join('-'));
+            return date >= startDate && date <= endDate;
+        });
+
+        const filteredMovimentiData = globalMovimentiData.filter(d => {
+            const date = new Date(d.date.split('/').reverse().join('-'));
+            return date >= startDate && date <= endDate;
+        });
+
+        const alignedMovements = alignMovementDates(filteredPortfolioData, filteredMovimentiData);
+        const stats = calculateStats(filteredPortfolioData, alignedMovements);
+        displayResults(stats, alignedMovements); // Passa anche alignedMovements
+    }
 </script>
 </body>
 </html>

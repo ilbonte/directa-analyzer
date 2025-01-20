@@ -49,7 +49,6 @@ function alignMovementDates(portfolioData, movimentiData) {
 }
 
 
-
 function calculateStats(portfolioData, alignedMovements) {
     let cumulativeGainLoss = 0;
     let cumulativeInvestment = 0;
@@ -89,6 +88,7 @@ function calculateStats(portfolioData, alignedMovements) {
         totalMovements: alignedMovements.reduce((sum, m) => sum + m.value, 0)
     };
 }
+
 let chart = null;
 
 function updateChart(dailyGains) {
@@ -163,7 +163,7 @@ function displayResults(stats) {
     `);
 
     updateChart(stats.dailyGains);
-    $('#results').show();
+    $('.results').show();
 }
 
 
@@ -251,9 +251,7 @@ function formatCurrency(value) {
 }
 
 
-console.log('portfolio.js loaded');
 if (typeof module !== "undefined" && module.exports) {
-    console.log('portfolio.js exported');
     module.exports = {
         parseCSV, parseItalianNumber, displayResults, chart, alignMovementDates, calculateStats
     }
