@@ -1,9 +1,3 @@
-function parseItalianNumber(str) {
-    if (!str) return 0;
-    return parseFloat(str.replace(',', '.'));
-}
-
-
 function alignMovementDates(portfolioData, movimentiData) {
     // todo: controllare cosa succede se ho più movimenti simili in date vicine o lo stesso giorno
     const windowDays = 3;
@@ -132,13 +126,16 @@ function updateChart(dailyGains) {
                     mode: 'index',
                     intersect: false,
                     callbacks: {
-                        label: function(context) {
+                        label: function (context) {
                             let label = context.dataset.label || '';
                             if (label) {
                                 label += ': ';
                             }
                             if (context.parsed.y !== null) {
-                                label += new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(context.parsed.y);
+                                label += new Intl.NumberFormat('it-IT', {
+                                    style: 'currency',
+                                    currency: 'EUR'
+                                }).format(context.parsed.y);
                             }
                             return label;
                         }
@@ -182,76 +179,78 @@ function updateChart(dailyGains) {
     });
 }
 
-    function displayResults(stats) {
-        $('#patrimonyInitial').text(formatCurrency(stats.patrimonyInitial));
-        $('#patrimonyFinal').text(formatCurrency(stats.patrimonyFinal));
-        $('#totalMovements').text(formatCurrency(stats.totalMovements));
-        $('#totalGainLoss').text(formatCurrency(stats.totalGainLoss));
+function displayResults(stats) {
+    $('#patrimonyInitial').text(formatCurrency(stats.patrimonyInitial));
+    $('#patrimonyFinal').text(formatCurrency(stats.patrimonyFinal));
+    $('#totalMovements').text(formatCurrency(stats.totalMovements));
+    $('#totalGainLoss').text(formatCurrency(stats.totalGainLoss));
 
-        updateChart(stats.dailyGains);
-        $('.results').show();
-    }
+    updateChart(stats.dailyGains);
+    $('.results').show();
+}
 
 
 function parseCSV(file) {
-    return new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onload = function (event) {
-            const csv = event.target.result;
-            const lines = csv.split('\n');
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = function (event) {
+      const result = parseCSVContent(event.target.result);
+      resolve(result);
+    };
+    reader.readAsText(file);
+  });
+}
 
-            // Determina se il CSV ha l'header nella prima riga o dopo i metadati
-            const headerIndex = findHeaderIndex(lines);
-            if (headerIndex === -1) {
-                resolve({
-                    error: "Formato CSV non valido: impossibile trovare l'header",
-                    portfolioData: [],
-                    movimentiData: []
+function parseCSVContent(csvText) {
+    const lines = csvText.split('\n');
+    const headerIndex = findHeaderIndex(lines);
+
+    if (headerIndex === -1) {
+        return {
+            portfolioData: [],
+            movimentiData: [],
+            warnings: ["Header non trovato"],
+            error: "Formato CSV non valido: impossibile trovare l'header"
+        };
+    }
+
+    const portfolioData = [];
+    const movimentiData = [];
+    const warnings = [];
+
+    lines.slice(headerIndex + 1).forEach((line, index) => {
+        if (!line.trim()) return; // Salta righe vuote
+
+        const columns = line.split(',');
+
+        try {
+            // Parsing dati portafoglio (prima parte della riga)
+            if (columns[0]?.match(/^\d{2}\/\d{2}\/\d{4}$/)) {
+                portfolioData.push({
+                    date: columns[0].trim(),
+                    liquidita: parseFloat(columns[1]),
+                    patrimonio: parseFloat(columns[6])
                 });
-                return;
             }
 
-            const portfolioData = [];
-            const movimentiData = [];
-            const warnings = [];
-
-            // Processa le righe dopo l'header
-            lines.slice(headerIndex + 1).forEach((line, index) => {
-                if (!line.trim()) return; // Salta le righe vuote
-
-                const columns = line.split(',');
-
-                try {
-                    // Parsing del portfolio
-                    if (columns[0] && columns[0].trim().match(/^\d{2}\/\d{2}\/\d{4}$/)) {
-                        portfolioData.push({
-                            date: columns[0].trim(),
-                            liquidita: parseItalianNumber(columns[1]),
-                            patrimonio: parseItalianNumber(columns[6])
-                        });
-                    }
-
-                    // Parsing dei movimenti
-                    if (columns[8] && columns[8].trim().match(/^\d{2}\/\d{2}\/\d{4}$/)) {
-                        movimentiData.push({
-                            date: columns[8].trim(),
-                            value: parseItalianNumber(columns[10])
-                        });
-                    }
-                } catch (error) {
-                    warnings.push(`Errore nel parsing della riga ${index + headerIndex + 2}: ${error.message}`);
-                }
-            });
-
-            resolve({
-                portfolioData,
-                movimentiData,
-                warnings,
-                headerIndex
-            });
-        };
-        reader.readAsText(file);
+            // Parsing movimenti (seconda parte della riga)
+            if (columns[8]?.match(/^\d{2}\/\d{2}\/\d{4}$/)) {
+                movimentiData.push({
+                    date: columns[8].trim(),
+                    value: parseFloat(columns[10])
+                });
+            }
+        } catch (error) {
+            warnings.push(`Errore alla riga ${index + headerIndex + 2}: ${error.message}`);
+        }
     });
+
+    return {
+        portfolioData: portfolioData.filter(Boolean),
+        movimentiData: movimentiData.filter(Boolean),
+        warnings,
+        headerIndex
+    };
 }
 
 function findHeaderIndex(lines) {
@@ -278,7 +277,13 @@ function formatCurrency(value) {
 
 
 if (typeof module !== "undefined" && module.exports) {
-    module.exports = {
-        parseCSV, parseItalianNumber, displayResults, chart, alignMovementDates, calculateStats
-    }
+  module.exports = {
+    parseCSV,
+    parseCSVContent,
+    displayResults,
+    chart,
+    alignMovementDates,
+    calculateStats,
+    findHeaderIndex
+  }
 }
