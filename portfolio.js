@@ -154,17 +154,15 @@ function updateChart(dailyGains) {
 }
 
 
-function displayResults(stats) {
-    $('#totalStats').html(`
-        <p>Patrimonio iniziale: ${formatCurrency(stats.patrimonyInitial)}</p>
-        <p>Patrimonio finale: ${formatCurrency(stats.patrimonyFinal)}</p>
-        <p>Totale movimenti: ${formatCurrency(stats.totalMovements)}</p>
-        <p>Gain/Loss totale: ${formatCurrency(stats.totalGainLoss)}</p>
-    `);
+    function displayResults(stats) {
+        $('#patrimonyInitial').text(formatCurrency(stats.patrimonyInitial));
+        $('#patrimonyFinal').text(formatCurrency(stats.patrimonyFinal));
+        $('#totalMovements').text(formatCurrency(stats.totalMovements));
+        $('#totalGainLoss').text(formatCurrency(stats.totalGainLoss));
 
-    updateChart(stats.dailyGains);
-    $('.results').show();
-}
+        updateChart(stats.dailyGains);
+        $('.results').show();
+    }
 
 
 function parseCSV(file) {

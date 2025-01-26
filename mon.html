@@ -5,69 +5,162 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Analisi Portafoglio</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.3.0/chart.umd.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --background: #f8f9fa;
+            --card-background: #ffffff;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background);
+        }
+
+        .container {
+            max-width: 1200px;
+            padding: 2rem 1.5rem;
+        }
+
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            background-color: var(--card-background);
+            transition: box-shadow 0.2s;
+        }
+
+        .card:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+        }
+
+        .custom-file-input {
+            border: 2px dashed #e2e8f0;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .custom-file-input:hover {
+            border-color: var(--primary);
+            background-color: rgba(99, 102, 241, 0.05);
+        }
+
+        .stat-card {
+            padding: 1.5rem;
+            border-radius: 12px;
+            background-color: var(--card-background);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 500px;
+            width: 100%;
+        }
+    </style>
 </head>
 <body>
-<div class="container mt-4">
-    <h1>Analisi Portafoglio</h1>
+<div class="container">
+    <header class="mb-5 text-center">
+        <h1 class="display-5 fw-bold mb-3"><i class="fas fa-chart-line me-2"></i>Analisi Portafoglio</h1>
+        <p class="text-muted">Carica il tuo file CSV per visualizzare l'analisi dettagliata del tuo portafoglio</p>
+    </header>
 
     <!-- File Input -->
     <div class="card mb-4">
-        <div class="card-body">
-            <h5 class="card-title">Carica CSV</h5>
-            <input type="file" class="form-control" id="csvFile" accept=".csv">
+        <div class="card-body py-5">
+            <div class="d-flex flex-column align-items-center">
+                <i class="fas fa-file-csv mb-3 text-primary" style="font-size: 3rem"></i>
+                <h5 class="card-title mb-2">Carica il tuo file CSV</h5>
+                <p class="text-muted mb-3">Formati supportati: .csv</p>
+                <input type="file" class="form-control custom-file-input w-75" id="csvFile" accept=".csv">
+            </div>
         </div>
+    </div>
 
-        <div class="mb-4" id="dateRange" style="display:none;">
-            <div class="card-body">
-                <h5 class="card-title">Periodo di Analisi</h5>
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label for="startDate" class="form-label">Data Iniziale</label>
-                        <input type="date" class="form-control" id="startDate">
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label for="endDate" class="form-label">Data Finale</label>
-                        <input type="date" class="form-control" id="endDate">
-                    </div>
+    <!-- Date Range -->
+    <div class="card mb-4" id="dateRange" style="display:none;">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="card-title mb-0"><i class="fas fa-calendar-alt me-2"></i>Seleziona Periodo</h5>
+                <button id="resetDates" class="btn btn-link text-muted" style="display:none;">
+                    Resetta date
+                </button>
+            </div>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label for="startDate" class="form-label text-muted">Data Iniziale</label>
+                    <input type="date" class="form-control" id="startDate">
                 </div>
-                <div class="text-end">
-                    <button id="resetDates" class="btn btn-secondary" style="display:none;">
-                        Reset Date
-                    </button>
+                <div class="col-md-6">
+                    <label for="endDate" class="form-label text-muted">Data Finale</label>
+                    <input type="date" class="form-control" id="endDate">
                 </div>
             </div>
         </div>
-
     </div>
 
     <!-- Results Section -->
     <div class="results" style="display:none;">
-        <!-- Overall Stats -->
-        <div class="row">
-            <div class="col-md-6">
-                <div class="card mb-4">
-                    <div class="card-header">
-                        <h5 class="card-title mb-0">Statistiche Totali</h5>
-                    </div>
-                    <div class="card-body">
-                        <div id="totalStats"></div>
+        <!-- Stats Grid -->
+        <div class="row row-cols-1 row-cols-md-4 g-4 mb-4">
+            <div class="col">
+                <div class="stat-card">
+                    <div class="d-flex align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-1">Gain/Loss Totale</h6>
+                            <div class="stat-value" id="totalGainLoss">-</div>
+                        </div>
                     </div>
                 </div>
             </div>
-
+            <div class="col">
+                <div class="stat-card">
+                    <div class="d-flex align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-1">Totale Movimenti</h6>
+                            <div class="stat-value" id="totalMovements">-</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="stat-card">
+                    <div class="d-flex align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-1">Patrimonio Iniziale</h6>
+                            <div class="stat-value" id="patrimonyInitial">-</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="stat-card">
+                    <div class="d-flex align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-1">Patrimonio Finale</h6>
+                            <div class="stat-value" id="patrimonyFinal">-</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-
-        <!-- Cumulative Gain/Loss Chart -->
+        <!-- Chart Section -->
         <div class="card mb-4">
-            <div class="card-header">
-                <h5 class="card-title mb-0">Gain/Loss Cumulativo</h5>
-            </div>
             <div class="card-body">
-                <div style="position: relative; height: 60vh; width: 100%">
+                <h5 class="card-title mb-4"><i class="fas fa-chart-area me-2"></i>Andamento Cumulativo</h5>
+                <div class="chart-container">
                     <canvas id="gainLossChart"></canvas>
                 </div>
             </div>
@@ -76,29 +169,34 @@
 </div>
 
 <!-- Modal Error -->
-<div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+<div class="modal fade" id="errorModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header">
-                <div>
-                    <h5 class="modal-title" id="errorModalLabel">Errore Rilevato.</h5>
-                    <p>Fai uno screenshot e riportalo allo sviluppatore</p>
-                    <p>Nel frattempo assicurati di aver seguito correttamente le istuzioni fornite</p>
+            <div class="modal-header border-0">
+                <div class="d-flex align-items-center">
+                    <div class="bg-danger rounded-circle p-2 me-3">
+                        <i class="fas fa-circle-exclamation fa-lg text-white"></i>
+                    </div>
+                    <div>
+                        <h5 class="modal-title text-danger">Errore durante l'elaborazione</h5>
+                        <p class="text-muted mb-0">Il programmatore è una capra, inviali questo errore cosi che possa risolvere il problema</p>
+                    </div>
                 </div>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body">
-                <p id="errorMessage"></p>
-                <small id="errorStack" style="white-space: pre-wrap;"></small>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
+            <div class="modal-body pt-0">
+                <div class="alert alert-light">
+                    <p class="mb-2" id="errorMessage"></p>
+                    <code class="text-danger small" id="errorStack"></code>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.3.0/chart.umd.min.js"></script>
 <script src="./portfolio.js"></script>
 <script src="./error-catcher.js"></script>
 <script>
