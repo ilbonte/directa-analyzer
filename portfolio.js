@@ -107,24 +107,43 @@ function updateChart(dailyGains) {
                     data: dailyGains.map(day => day.cumulativeGainLoss),
                     borderColor: 'rgb(75, 192, 192)',
                     tension: 0.1,
-                    yAxisID: 'y'
+                    yAxisID: 'y',
+                    pointRadius: 0, // Rimuove i punti per un aspetto più pulito
                 },
                 {
                     label: 'Investimenti Cumulativi',
                     data: dailyGains.map(day => day.cumulativeInvestment),
                     borderColor: 'rgb(255, 99, 132)',
                     tension: 0.1,
-                    yAxisID: 'y1'
+                    yAxisID: 'y1',
+                    pointRadius: 0 // Rimuove i punti per un aspetto più pulito
                 }
             ]
         },
         options: {
-            pointStyle: false,
             responsive: true,
             maintainAspectRatio: false,
             interaction: {
                 mode: 'index',
                 intersect: false,
+            },
+            plugins: {
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (context.parsed.y !== null) {
+                                label += new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(context.parsed.y);
+                            }
+                            return label;
+                        }
+                    }
+                }
             },
             scales: {
                 y: {
@@ -133,7 +152,11 @@ function updateChart(dailyGains) {
                     position: 'left',
                     title: {
                         display: true,
-                        text: 'Gain/Loss (€)'
+                        text: 'Gain/Loss (€)',
+                        color: 'rgb(75, 192, 192)' // Colore corrispondente alla linea
+                    },
+                    grid: {
+                        color: 'rgba(200, 200, 200, 0.2)' // Colore della griglia più tenue
                     }
                 },
                 y1: {
@@ -142,17 +165,22 @@ function updateChart(dailyGains) {
                     position: 'right',
                     title: {
                         display: true,
-                        text: 'Investimenti (€)'
+                        text: 'Investimenti (€)',
+                        color: 'rgb(255, 99, 132)' // Colore corrispondente alla linea
                     },
                     grid: {
-                        drawOnChartArea: false
+                        drawOnChartArea: false // Rimuove la griglia per questo asse
+                    }
+                },
+                x: {
+                    grid: {
+                        color: 'rgba(200, 200, 200, 0.2)' // Colore della griglia più tenue
                     }
                 }
             }
         }
     });
 }
-
 
     function displayResults(stats) {
         $('#patrimonyInitial').text(formatCurrency(stats.patrimonyInitial));

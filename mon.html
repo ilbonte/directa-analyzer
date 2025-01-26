@@ -67,6 +67,11 @@
             height: 500px;
             width: 100%;
         }
+
+        .chart-container.expanded {
+            height: 90vh; /* Altezza del grafico espanso */
+            width: 100%; /* Larghezza del grafico espanso */
+        }
     </style>
 </head>
 <body>
@@ -113,7 +118,7 @@
     <!-- Results Section -->
     <div class="results" style="display:none;">
         <!-- Stats Grid -->
-        <div class="row row-cols-1 row-cols-md-4 g-4 mb-4">
+        <div class="row row-cols-1 row-cols-md-4 row-cols-sm-2 g-4 mb-4">
             <div class="col">
                 <div class="stat-card">
                     <div class="d-flex align-items-center">
@@ -159,7 +164,12 @@
         <!-- Chart Section -->
         <div class="card mb-4">
             <div class="card-body">
-                <h5 class="card-title mb-4"><i class="fas fa-chart-area me-2"></i>Andamento Cumulativo</h5>
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="card-title mb-0"><i class="fas fa-chart-area me-2"></i>Andamento Cumulativo</h5>
+                    <button id="expandChart" class="btn btn-link text-muted">
+                        <i class="fas fa-expand"></i> Espandi
+                    </button>
+                </div>
                 <div class="chart-container">
                     <canvas id="gainLossChart"></canvas>
                 </div>
@@ -179,7 +189,8 @@
                     </div>
                     <div>
                         <h5 class="modal-title text-danger">Errore durante l'elaborazione</h5>
-                        <p class="text-muted mb-0">Il programmatore è una capra, inviali questo errore cosi che possa risolvere il problema</p>
+                        <p class="text-muted mb-0">Il programmatore è una capra, inviali questo errore cosi che possa
+                            risolvere il problema</p>
                     </div>
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -256,6 +267,51 @@
         $('#endDate').val(maxDate);
         $('#resetDates').hide();
         updateAnalysis();
+    });
+
+    // Funzione per espandere il grafico
+    $('#expandChart').click(function () {
+        const chartContainer = $('.chart-container');
+        const chartCard = chartContainer.closest('.card');
+
+        if (chartContainer.hasClass('expanded')) {
+            // Se il grafico è già espanso, ripristina le dimensioni originali
+            chartContainer.removeClass('expanded');
+            chartCard.css({
+                'position': '',
+                'top': '',
+                'left': '',
+                'width': '',
+                'z-index': '',
+                'margin': ''
+            });
+            $('#expandChart').html('<i class="fas fa-expand"></i> Espandi');
+        } else {
+            // Espandi il grafico
+            chartContainer.addClass('expanded');
+            chartCard.css({
+                'position': 'fixed',
+                'top': '0',
+                'left': '0',
+                'width': '100%',
+                'z-index': '1050',
+                'margin': '0'
+            });
+            $('#expandChart').html('<i class="fas fa-compress"></i> Comprimi');
+        }
+
+        // Ridisegna il grafico per adattarlo alle nuove dimensioni
+        const chart = Chart.getChart("gainLossChart");
+        if (chart) {
+            chart.resize();
+        }
+    });
+
+    $(window).resize(function () {
+        const chart = Chart.getChart("gainLossChart");
+        if (chart) {
+            chart.resize();
+        }
     });
 
     // Aggiorna la chiamata in updateAnalysis
