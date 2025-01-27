@@ -176,6 +176,88 @@
             </div>
         </div>
     </div>
+
+
+    <!-- Sezione Istruzioni -->
+    <div class="card mb-4" id="instructionsCard">
+        <div class="card-body">
+
+            <div class="accordion" id="guideAccordion">
+                <!-- Istruzioni Base -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#collapseBasic">
+                            📌 Guida Rapida
+                        </button>
+                    </h2>
+                    <div id="collapseBasic" class="accordion-collapse collapse show">
+                        <div class="accordion-body">
+                            <div>
+
+                                <h2>Cos'e' questo strumento?</h2>
+                                <p>Attraverso questo strumento potrai visualizzare l'andamento dei tuoi investimenti fatti su Directa nel corso del tempo.</p>
+                                <p>Purtroppo il grafico fornito da Directa nella sezione "Patimonio" include anche i bonifici in entrata e uscita, il che rende difficile capire il Gain/Loss effettivo dei propri investimeti</p>
+                                <p>Questo strumento ti permettera' di visualizzare quel grafico al netto dei movimenti </p>
+
+
+                                <h2>Come usare questo strumento?</h2>
+                                <ol>
+                                    <li>Accedi al tuo conto Directa selezionando la piattaforma "Libera"</li>
+                                    <li>Naviga alla pagina con lo storico: "Conto" -> "Patrimonio" -> "Storico"
+                                    <li>Seleziona il periodo che ti interessa. Il massimo è 3 anni.</li>
+                                </ol>
+                                <img src="assets/first_step.png" alt="first step" class="w-100 mb-2">
+
+                                <h3>Ora scarica i dati:</h3>
+                                <ol>
+                                    <li>Premi sull'icona in alto a destra sopra al grafico</li>
+                                    <li>Seleziona il formato CSV e scarica il file</li>
+                                    <li>Importa il file qui sopra</li>
+                                </ol>
+
+                                <img src="assets/second_step_crop.png" alt="second step" class="w-100 ">
+
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#collapseFaq">
+                            ❓ Domande Frequenti
+                        </button>
+                    </h2>
+                    <div id="collapseFaq" class="accordion-collapse collapse show">
+                        <div class="accordion-body">
+                            <h6>Q: I miei dati e la mia privacy è rispettata?</h6>
+                            <p>A: Si, i dati vengono analizzati localmente sul tuo pc e non vengono condivisi con
+                                nessuno.
+                            </p>
+
+                            <p>Per totale trasparenza il codice di questo progetto è open source e disponibile <a
+                                    href="https://github.com/ilbonte/directa-analyzer"> qui</a></p>
+
+                            <p>Se ti fa stare piu' tranquillo puoi anche modificare il csv scaricato da Directa togliendo le prime 6 righe che contengono alcune tue informazioni anagrafiche</p>
+
+
+                            <h6>Q: Perché il valore di "Gain/Loss Totale" non corrisponde a quanto presente su Directa?</h6>
+                            <p>A: Il "Gain/Loss Totale" che vedi qua comprende anche quanto ottenuto dalle cedole e dividendi, mentre Directa non lo include</p>
+
+                            <h6>Q: Hai altre domande o vuoi lasciare un feeback?</h6>
+                            <p>A: Puoi farlo <a href="https://forms.gle/mXQzmeDaGarpvDn77">qua</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <!-- Modal Error -->
