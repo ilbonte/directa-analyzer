@@ -166,9 +166,14 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h5 class="card-title mb-0"><i class="fas fa-chart-area me-2"></i>Andamento Cumulativo</h5>
-                    <button id="expandChart" class="btn btn-link text-muted">
-                        <i class="fas fa-expand"></i> Espandi
-                    </button>
+                    <div>
+                        <button id="resetZoom" class="btn btn-outline-secondary btn-sm me-2">
+                            <i class="fas fa-undo"></i> Reset Zoom
+                        </button>
+                        <button id="expandChart" class="btn btn-outline-secondary btn-sm me-2">
+                            <i class="fas fa-expand"></i> Espandi
+                        </button>
+                    </div>
                 </div>
                 <div class="chart-container">
                     <canvas id="gainLossChart"></canvas>
@@ -196,9 +201,13 @@
                             <div>
 
                                 <h2>Cos'e' questo strumento?</h2>
-                                <p>Attraverso questo strumento potrai visualizzare l'andamento dei tuoi investimenti fatti su Directa nel corso del tempo.</p>
-                                <p>Purtroppo il grafico fornito da Directa nella sezione "Patimonio" include anche i bonifici in entrata e uscita, il che rende difficile capire il Gain/Loss effettivo dei propri investimeti</p>
-                                <p>Questo strumento ti permettera' di visualizzare quel grafico al netto dei movimenti </p>
+                                <p>Attraverso questo strumento potrai visualizzare l'andamento dei tuoi investimenti
+                                    fatti su Directa nel corso del tempo.</p>
+                                <p>Purtroppo il grafico fornito da Directa nella sezione "Patimonio" include anche i
+                                    bonifici in entrata e uscita, il che rende difficile capire il Gain/Loss effettivo
+                                    dei propri investimeti</p>
+                                <p>Questo strumento ti permettera' di visualizzare quel grafico al netto dei
+                                    movimenti </p>
 
 
                                 <h2>Come usare questo strumento?</h2>
@@ -235,22 +244,24 @@
                     </h2>
                     <div id="collapseFaq" class="accordion-collapse collapse show">
                         <div class="accordion-body">
-                            <h6>Q: I miei dati e la mia privacy è rispettata?</h6>
+                            <h6>Q: I miei dati e la mia privacy sono rispettati?</h6>
                             <p>A: Si, i dati vengono analizzati localmente sul tuo pc e non vengono condivisi con
                                 nessuno.
                             </p>
 
-                            <p>Per totale trasparenza il codice di questo progetto è open source e disponibile <a
-                                    href="https://github.com/ilbonte/directa-analyzer"> qui</a></p>
+                            <p>Per totale trasparenza il codice di questo progetto è open source e disponibile<a
+                                    href="https://github.com/ilbonte/directa-analyzer" target="_blank"> qui</a></p>
 
-                            <p>Se ti fa stare piu' tranquillo puoi anche modificare il csv scaricato da Directa togliendo le prime 6 righe che contengono alcune tue informazioni anagrafiche</p>
+                            <p>Se ti fa stare piu' tranquillo puoi anche modificare il csv scaricato da Directa
+                                togliendo le prime 6 righe che contengono alcune tue informazioni anagrafiche</p>
 
-
-                            <h6>Q: Perché il valore di "Gain/Loss Totale" non corrisponde a quanto presente su Directa?</h6>
-                            <p>A: Il "Gain/Loss Totale" che vedi qua comprende anche quanto ottenuto dalle cedole e dividendi, mentre Directa non lo include</p>
+                            <h6>Q: Perché il valore di "Gain/Loss Totale" non corrisponde a quanto presente su
+                                Directa?</h6>
+                            <p>A: Il "Gain/Loss Totale" che vedi qua comprende anche quanto ottenuto dalle cedole e
+                                dividendi, mentre Directa non lo include</p>
 
                             <h6>Q: Hai altre domande o vuoi lasciare un feeback?</h6>
-                            <p>A: Puoi farlo <a href="https://forms.gle/mXQzmeDaGarpvDn77">qua</a></p>
+                            <p>A: Puoi farlo <a href="https://forms.gle/mXQzmeDaGarpvDn77" target="_blank">qua</a></p>
                         </div>
                     </div>
                 </div>
@@ -289,7 +300,9 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.3.0/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.2.0/chartjs-plugin-zoom.min.js"></script>
+
 <script src="./portfolio.js"></script>
 <script src="./error-catcher.js"></script>
 <script>
@@ -394,6 +407,10 @@
         if (chart) {
             chart.resize();
         }
+    });
+
+    document.getElementById('resetZoom').addEventListener('click', () => {
+        chart.resetZoom();
     });
 
     // Aggiorna la chiamata in updateAnalysis

@@ -102,7 +102,7 @@ function updateChart(dailyGains) {
                     borderColor: 'rgb(75, 192, 192)',
                     tension: 0.1,
                     yAxisID: 'y',
-                    pointRadius: 0, // Rimuove i punti per un aspetto più pulito
+                    pointRadius: 0,
                 },
                 {
                     label: 'Investimenti Cumulativi',
@@ -110,7 +110,7 @@ function updateChart(dailyGains) {
                     borderColor: 'rgb(255, 99, 132)',
                     tension: 0.1,
                     yAxisID: 'y1',
-                    pointRadius: 0 // Rimuove i punti per un aspetto più pulito
+                    pointRadius: 0
                 }
             ]
         },
@@ -122,6 +122,35 @@ function updateChart(dailyGains) {
                 intersect: false,
             },
             plugins: {
+                zoom: {
+                    animation: {
+                        duration: 0
+                    },
+                    pan: {
+                        enabled: true,
+                        mode: 'xy'
+                    },
+                    limits: {
+                        y: {min: 'original', max: 'original'},
+                        y1: {min: 'original', max: 'original'}
+                    },
+                    zoom: {
+                        wheel: {
+                            enabled: true,
+                        },
+                        pinch: {
+                            enabled: true
+                        },
+                        mode: 'xy',
+                        drag: {
+                            enabled: true,
+                            backgroundColor: 'rgba(75, 192, 192, 0.1)',
+                            borderColor: 'rgb(75, 192, 192)',
+                            borderWidth: 1,
+                            threshold: 10
+                        },
+                    }
+                },
                 tooltip: {
                     mode: 'index',
                     intersect: false,
@@ -150,10 +179,10 @@ function updateChart(dailyGains) {
                     title: {
                         display: true,
                         text: 'Gain/Loss (€)',
-                        color: 'rgb(75, 192, 192)' // Colore corrispondente alla linea
+                        color: 'rgb(75, 192, 192)'
                     },
                     grid: {
-                        color: 'rgba(200, 200, 200, 0.2)' // Colore della griglia più tenue
+                        color: 'rgba(200, 200, 200, 0.2)'
                     }
                 },
                 y1: {
@@ -163,15 +192,15 @@ function updateChart(dailyGains) {
                     title: {
                         display: true,
                         text: 'Investimenti (€)',
-                        color: 'rgb(255, 99, 132)' // Colore corrispondente alla linea
+                        color: 'rgb(255, 99, 132)'
                     },
                     grid: {
-                        drawOnChartArea: false // Rimuove la griglia per questo asse
+                        drawOnChartArea: false
                     }
                 },
                 x: {
                     grid: {
-                        color: 'rgba(200, 200, 200, 0.2)' // Colore della griglia più tenue
+                        color: 'rgba(200, 200, 200, 0.2)'
                     }
                 }
             }
@@ -191,14 +220,14 @@ function displayResults(stats) {
 
 
 function parseCSV(file) {
-  return new Promise((resolve) => {
-    const reader = new FileReader();
-    reader.onload = function (event) {
-      const result = parseCSVContent(event.target.result);
-      resolve(result);
-    };
-    reader.readAsText(file);
-  });
+    return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = function (event) {
+            const result = parseCSVContent(event.target.result);
+            resolve(result);
+        };
+        reader.readAsText(file);
+    });
 }
 
 function parseCSVContent(csvText) {
@@ -277,13 +306,13 @@ function formatCurrency(value) {
 
 
 if (typeof module !== "undefined" && module.exports) {
-  module.exports = {
-    parseCSV,
-    parseCSVContent,
-    displayResults,
-    chart,
-    alignMovementDates,
-    calculateStats,
-    findHeaderIndex
-  }
+    module.exports = {
+        parseCSV,
+        parseCSVContent,
+        displayResults,
+        chart,
+        alignMovementDates,
+        calculateStats,
+        findHeaderIndex
+    }
 }
