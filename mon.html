@@ -4,74 +4,170 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Analisi Portafoglio</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!--    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">-->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/gh/rajnandan1/brutopia@latest/dist/assets/compiled/css/app.css"
+          rel="stylesheet" crossorigin="anonymous">
+
     <style>
         :root {
-            --primary: #6366f1;
-            --primary-hover: #4f46e5;
-            --background: #f8f9fa;
+            --primary: #FFB5E8; /* Pastel Pink */
+            --primary-hover: #FF9CEE;
+            --background: #FFF4F4; /* Light Pink Background */
             --card-background: #ffffff;
+            --accent1: #AFF8DB; /* Pastel Mint */
+            --accent2: #B28DFF; /* Pastel Purple */
+            --accent3: #BFFCC6; /* Pastel Green */
+            --text-dark: #333333;
         }
+
 
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--background);
         }
 
-        .container {
-            max-width: 1200px;
-            padding: 2rem 1.5rem;
-        }
-
         .card {
-            border: none;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-            background-color: var(--card-background);
-            transition: box-shadow 0.2s;
+            border: 3px solid var(--text-dark);
+            border-radius: 8px;
+            box-shadow: 5px 5px 0px var(--text-dark);
+            transition: all 0.2s ease;
+            background: var(--card-background);
         }
 
-        .card:hover {
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
-        }
-
-        .custom-file-input {
-            border: 2px dashed #e2e8f0;
-            padding: 2rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .custom-file-input:hover {
-            border-color: var(--primary);
-            background-color: rgba(99, 102, 241, 0.05);
-        }
 
         .stat-card {
+            border: 3px solid var(--text-dark);
+            border-radius: 8px;
             padding: 1.5rem;
-            border-radius: 12px;
-            background-color: var(--card-background);
+            background: var(--accent1);
+            box-shadow: 5px 5px 0px var(--text-dark);
+            transition: all 0.2s ease;
+        }
+
+        .stat-card:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 7px 7px 0px var(--text-dark);
+        }
+
+        .stat-card:nth-child(2n) {
+            background: var(--primary);
+        }
+
+        .stat-card:nth-child(3n) {
+            background: var(--accent2);
+        }
+
+        .stat-card:nth-child(4n) {
+            background: var(--accent3);
         }
 
         .stat-value {
             font-size: 2rem;
             font-weight: 700;
-            color: var(--primary);
+            color: var(--text-dark);
+        }
+
+        .btn {
+            border: 2px solid var(--text-dark);
+            border-radius: 8px;
+            box-shadow: 3px 3px 0px var(--text-dark);
+            transition: all 0.2s ease;
+            font-weight: 600;
+        }
+
+        .btn:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 5px 5px 0px var(--text-dark);
+        }
+
+        .btn-outline-secondary {
+            background: var(--accent1);
+            color: var(--text-dark);
+        }
+
+        .btn-outline-secondary:hover {
+            background: var(--accent2);
+            color: var(--text-dark);
+            border-color: var(--text-dark);
+        }
+
+        .custom-file-input {
+            border: 3px dashed var(--text-dark);
+            background: var(--accent1);
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+        }
+
+        .custom-file-input:hover {
+            border-color: var(--text-dark);
+            background-color: var(--primary);
+            transform: translate(-2px, -2px);
+            box-shadow: 5px 5px 0px var(--text-dark);
+        }
+
+        .form-control {
+            border: 2px solid var(--text-dark);
+            border-radius: 8px;
+            box-shadow: 3px 3px 0px var(--text-dark);
+            transition: all 0.2s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--text-dark);
+            box-shadow: 5px 5px 0px var(--text-dark);
+            transform: translate(-2px, -2px);
+        }
+
+        .accordion-button {
+            border: 2px solid var(--text-dark);
+            background: var(--accent1);
+            font-weight: 600;
+        }
+
+        .accordion-button:not(.collapsed) {
+            background: var(--primary);
+            color: var(--text-dark);
+        }
+
+        .modal-content {
+            border: 3px solid var(--text-dark);
+            border-radius: 8px;
+            box-shadow: 5px 5px 0px var(--text-dark);
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            color: var(--text-dark);
+            font-weight: 700;
         }
 
         .chart-container {
-            position: relative;
-            height: 500px;
-            width: 100%;
-        }
+            background: var(--card-background);
+            border: 3px solid var(--text-dark);
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: 5px 5px 0px var(--text-dark);
 
-        .chart-container.expanded {
-            height: 90vh; /* Altezza del grafico espanso */
-            width: 100%; /* Larghezza del grafico espanso */
-        }
+    /* ... stili esistenti ... */
+    height: 400px; /* altezza di default */
+    transition: all 0.3s ease; /* transizione fluida */
+}
+
+.chart-container.expanded {
+    height: 90vh;
+    width: 100%;
+}
+
+/* Stile per la card quando non è espansa */
+.card:not(.expanded) .chart-container {
+    height: 400px;
+    width: 100%;
+}
     </style>
 </head>
 <body>
@@ -118,12 +214,12 @@
     <!-- Results Section -->
     <div class="results" style="display:none;">
         <!-- Stats Grid -->
-        <div class="row row-cols-1 row-cols-md-4 row-cols-sm-2 g-4 mb-4">
+        <div class="row row-cols-1 row-cols-md-4 row-cols-sm-2 g-2 mb-4">
             <div class="col">
                 <div class="stat-card">
                     <div class="d-flex align-items-center">
                         <div>
-                            <h6 class="text-muted mb-1">Gain/Loss Totale</h6>
+                            <h5 class="mb-1">Gain/Loss Totale</h5>
                             <div class="stat-value" id="totalGainLoss">-</div>
                         </div>
                     </div>
@@ -133,7 +229,7 @@
                 <div class="stat-card">
                     <div class="d-flex align-items-center">
                         <div>
-                            <h6 class="text-muted mb-1">Totale Movimenti</h6>
+                            <h5 class="mb-1">Totale Movimenti</h5>
                             <div class="stat-value" id="totalMovements">-</div>
                         </div>
                     </div>
@@ -143,7 +239,7 @@
                 <div class="stat-card">
                     <div class="d-flex align-items-center">
                         <div>
-                            <h6 class="text-muted mb-1">Patrimonio Iniziale</h6>
+                            <h5 class="mb-1">Patrimonio Iniziale</h5>
                             <div class="stat-value" id="patrimonyInitial">-</div>
                         </div>
                     </div>
@@ -153,7 +249,7 @@
                 <div class="stat-card">
                     <div class="d-flex align-items-center">
                         <div>
-                            <h6 class="text-muted mb-1">Patrimonio Finale</h6>
+                            <h5 class="mb-1">Patrimonio Finale</h5>
                             <div class="stat-value" id="patrimonyFinal">-</div>
                         </div>
                     </div>
@@ -299,9 +395,12 @@
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>-->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.2.0/chartjs-plugin-zoom.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+        crossorigin="anonymous"></script>
 
 <script src="./portfolio.js"></script>
 <script src="./error-catcher.js"></script>
@@ -365,43 +464,51 @@
     });
 
     // Funzione per espandere il grafico
-    $('#expandChart').click(function () {
-        const chartContainer = $('.chart-container');
-        const chartCard = chartContainer.closest('.card');
+ $('#expandChart').click(function () {
+    const chartContainer = $('.chart-container');
+    const chartCard = chartContainer.closest('.card');
 
-        if (chartContainer.hasClass('expanded')) {
-            // Se il grafico è già espanso, ripristina le dimensioni originali
-            chartContainer.removeClass('expanded');
-            chartCard.css({
-                'position': '',
-                'top': '',
-                'left': '',
-                'width': '',
-                'z-index': '',
-                'margin': ''
-            });
-            $('#expandChart').html('<i class="fas fa-expand"></i> Espandi');
-        } else {
-            // Espandi il grafico
-            chartContainer.addClass('expanded');
-            chartCard.css({
-                'position': 'fixed',
-                'top': '0',
-                'left': '0',
-                'width': '100%',
-                'z-index': '1050',
-                'margin': '0'
-            });
-            $('#expandChart').html('<i class="fas fa-compress"></i> Comprimi');
-        }
+    if (chartContainer.hasClass('expanded')) {
+        // Ripristina le dimensioni originali
+        chartContainer.removeClass('expanded');
+        chartCard.removeClass('expanded').css({
+            'position': '',
+            'top': '',
+            'left': '',
+            'width': '',
+            'z-index': '',
+            'margin': ''
+        });
+        $('#expandChart').html('<i class="fas fa-expand"></i> Espandi');
 
-        // Ridisegna il grafico per adattarlo alle nuove dimensioni
+        // Forza il ridimensionamento dopo un breve delay
+        setTimeout(() => {
+            const chart = Chart.getChart("gainLossChart");
+            if (chart) {
+                chart.resize();
+            }
+        }, 300); // delay per aspettare la fine della transizione CSS
+
+    } else {
+        // Espandi il grafico
+        chartContainer.addClass('expanded');
+        chartCard.addClass('expanded').css({
+            'position': 'fixed',
+            'top': '0',
+            'left': '0',
+            'width': '100%',
+            'z-index': '1050',
+            'margin': '0'
+        });
+        $('#expandChart').html('<i class="fas fa-compress"></i> Comprimi');
+
+        // Forza il ridimensionamento
         const chart = Chart.getChart("gainLossChart");
         if (chart) {
             chart.resize();
         }
-    });
-
+    }
+});
     $(window).resize(function () {
         const chart = Chart.getChart("gainLossChart");
         if (chart) {
