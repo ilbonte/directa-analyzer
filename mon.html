@@ -3,11 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analisi Portafoglio</title>
-    <!--    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">-->
+    <title>Analisi Portafoglio Directa</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
     <link href="https://cdn.jsdelivr.net/gh/rajnandan1/brutopia@latest/dist/assets/compiled/css/app.css"
           rel="stylesheet" crossorigin="anonymous">
 
@@ -16,13 +14,12 @@
             --primary: #FFB5E8; /* Pastel Pink */
             --primary-hover: #FF9CEE;
             --background: #FFF4F4; /* Light Pink Background */
-            --card-background: #ffffff;
+            --card-background: #fffdfd;
             --accent1: #AFF8DB; /* Pastel Mint */
             --accent2: #B28DFF; /* Pastel Purple */
             --accent3: #BFFCC6; /* Pastel Green */
             --text-dark: #333333;
         }
-
 
         body {
             font-family: 'Inter', sans-serif;
@@ -152,22 +149,19 @@
             border-radius: 8px;
             padding: 1rem;
             box-shadow: 5px 5px 0px var(--text-dark);
+            height: 600px; /* altezza di default */
+        }
 
-    /* ... stili esistenti ... */
-    height: 400px; /* altezza di default */
-    transition: all 0.3s ease; /* transizione fluida */
-}
+        .chart-container.expanded {
+            height: 90vh;
+            width: 100%;
+        }
 
-.chart-container.expanded {
-    height: 90vh;
-    width: 100%;
-}
-
-/* Stile per la card quando non è espansa */
-.card:not(.expanded) .chart-container {
-    height: 400px;
-    width: 100%;
-}
+        /* Stile per la card quando non è espansa */
+        .card:not(.expanded) .chart-container {
+            height: 600px;
+            width: 100%;
+        }
     </style>
 </head>
 <body>
@@ -309,7 +303,7 @@
                                 <h2>Come usare questo strumento?</h2>
                                 <ol>
                                     <li>Accedi al tuo conto Directa selezionando la piattaforma "Libera"</li>
-                                    <li>Naviga alla pagina con lo storico: "Conto" -> "Patrimonio" -> "Storico"
+                                    <li>Naviga alla pagina con lo storico: "Conto" -> "Patrimonio" -> "Storico" (vedi immagine sotto)
                                     <li>Seleziona il periodo che ti interessa. Il massimo è 3 anni.</li>
                                 </ol>
                                 <img src="assets/first_step.png" alt="first step" class="w-100 mb-2">
@@ -340,7 +334,7 @@
                     </h2>
                     <div id="collapseFaq" class="accordion-collapse collapse show">
                         <div class="accordion-body">
-                            <h6>Q: I miei dati e la mia privacy sono rispettati?</h6>
+                            <h4>Q: I miei dati e la mia privacy sono rispettati?</h4>
                             <p>A: Si, i dati vengono analizzati localmente sul tuo pc e non vengono condivisi con
                                 nessuno.
                             </p>
@@ -351,12 +345,12 @@
                             <p>Se ti fa stare piu' tranquillo puoi anche modificare il csv scaricato da Directa
                                 togliendo le prime 6 righe che contengono alcune tue informazioni anagrafiche</p>
 
-                            <h6>Q: Perché il valore di "Gain/Loss Totale" non corrisponde a quanto presente su
-                                Directa?</h6>
+                            <h4>Q: Perché il valore di "Gain/Loss Totale" non corrisponde a quanto presente su
+                                Directa?</h4>
                             <p>A: Il "Gain/Loss Totale" che vedi qua comprende anche quanto ottenuto dalle cedole e
                                 dividendi, mentre Directa non lo include</p>
 
-                            <h6>Q: Hai altre domande o vuoi lasciare un feeback?</h6>
+                            <h4>Q: Hai altre domande o vuoi lasciare un feeback?</h4>
                             <p>A: Puoi farlo <a href="https://forms.gle/mXQzmeDaGarpvDn77" target="_blank">qua</a></p>
                         </div>
                     </div>
@@ -464,57 +458,44 @@
     });
 
     // Funzione per espandere il grafico
- $('#expandChart').click(function () {
-    const chartContainer = $('.chart-container');
-    const chartCard = chartContainer.closest('.card');
+    $('#expandChart').click(function () {
+        const chartContainer = $('.chart-container');
+        const chartCard = chartContainer.closest('.card');
 
-    if (chartContainer.hasClass('expanded')) {
-        // Ripristina le dimensioni originali
-        chartContainer.removeClass('expanded');
-        chartCard.removeClass('expanded').css({
-            'position': '',
-            'top': '',
-            'left': '',
-            'width': '',
-            'z-index': '',
-            'margin': ''
-        });
-        $('#expandChart').html('<i class="fas fa-expand"></i> Espandi');
+        if (chartContainer.hasClass('expanded')) {
+            // Ripristina le dimensioni originali
+            chartContainer.removeClass('expanded');
+            chartCard.removeClass('expanded').css({
+                'position': '',
+                'top': '',
+                'left': '',
+                'width': '',
+                'z-index': '',
+                'margin': ''
+            });
+            $('#expandChart').html('<i class="fas fa-expand"></i> Espandi');
 
-        // Forza il ridimensionamento dopo un breve delay
-        setTimeout(() => {
+        } else {
+            // Espandi il grafico
+            chartContainer.addClass('expanded');
+            chartCard.addClass('expanded').css({
+                'position': 'fixed',
+                'top': '0',
+                'left': '0',
+                'width': '100%',
+                'z-index': '1050',
+                'margin': '0'
+            });
+            $('#expandChart').html('<i class="fas fa-compress"></i> Comprimi');
+
+            // Forza il ridimensionamento
             const chart = Chart.getChart("gainLossChart");
             if (chart) {
                 chart.resize();
             }
-        }, 300); // delay per aspettare la fine della transizione CSS
-
-    } else {
-        // Espandi il grafico
-        chartContainer.addClass('expanded');
-        chartCard.addClass('expanded').css({
-            'position': 'fixed',
-            'top': '0',
-            'left': '0',
-            'width': '100%',
-            'z-index': '1050',
-            'margin': '0'
-        });
-        $('#expandChart').html('<i class="fas fa-compress"></i> Comprimi');
-
-        // Forza il ridimensionamento
-        const chart = Chart.getChart("gainLossChart");
-        if (chart) {
-            chart.resize();
-        }
-    }
-});
-    $(window).resize(function () {
-        const chart = Chart.getChart("gainLossChart");
-        if (chart) {
-            chart.resize();
         }
     });
+
 
     document.getElementById('resetZoom').addEventListener('click', () => {
         chart.resetZoom();
@@ -536,9 +517,17 @@
         });
 
         const alignedMovements = alignMovementDates(filteredPortfolioData, filteredMovimentiData);
+        console.log(alignedMovements)
         const stats = calculateStats(filteredPortfolioData, alignedMovements);
-        displayResults(stats, alignedMovements); // Passa anche alignedMovements
+        displayResults(stats, alignedMovements);
     }
+
+    $(window).resize(function () {
+        const chart = Chart.getChart("gainLossChart");
+        if (chart) {
+            chart.resize();
+        }
+    });
 </script>
 </body>
 </html>
