@@ -214,6 +214,16 @@ function displayResults(stats) {
     $('#totalMovements').text(formatCurrency(stats.totalMovements));
     $('#totalGainLoss').text(formatCurrency(stats.totalGainLoss));
 
+        // Trova il giorno con il massimo gain e il massimo loss
+    const { maxGain, maxLoss } = findMaxGainAndLoss(stats.dailyGains);
+
+    // Aggiorna l'HTML con i nuovi dati
+    $('#maxGainDate').text(maxGain.date);
+    $('#maxGainValue').text(formatCurrency(maxGain.gainLoss));
+    $('#maxLossDate').text(maxLoss.date);
+    $('#maxLossValue').text(formatCurrency(maxLoss.gainLoss));
+
+
     updateChart(stats.dailyGains);
     $('.results').show();
 }
@@ -279,6 +289,31 @@ function parseCSVContent(csvText) {
         movimentiData: movimentiData.filter(Boolean),
         warnings,
         headerIndex
+    };
+}
+
+function findMaxGainAndLoss(dailyGains) {
+    let maxGain = { gainLoss: -Infinity };
+    let maxLoss = { gainLoss: Infinity };
+
+    dailyGains.forEach(day => {
+        if (day.gainLoss > maxGain.gainLoss) {
+            maxGain = day;
+        }
+        if (day.gainLoss < maxLoss.gainLoss) {
+            maxLoss = day;
+        }
+    });
+
+    return {
+        maxGain: {
+            date: maxGain.date,
+            gainLoss: maxGain.gainLoss
+        },
+        maxLoss: {
+            date: maxLoss.date,
+            gainLoss: maxLoss.gainLoss
+        }
     };
 }
 

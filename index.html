@@ -163,6 +163,47 @@
             width: 100%;
         }
 
+        /* Stile per le card più piccole */
+        /* Stile per la card compatta */
+        .card.compact-card {
+            border: 2px solid var(--text-dark);
+            border-radius: 8px;
+            box-shadow: 3px 3px 0px var(--text-dark);
+            background: var(--card-background);
+        }
+
+        /* Stile per la sezione Max Loss */
+        .max-loss-card {
+            background: rgba(255, 99, 132, 0.1); /* Sfondo rossiccio */
+            padding: 0.5rem;
+            border-radius: 6px;
+        }
+
+        .max-gain-card {
+            background: var(--accent1);
+            padding: 0.5rem;
+            border-radius: 6px;
+        }
+
+        /* Stile per i valori */
+        .stat-value-small {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        /* Stile per i titoli */
+        h6 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0;
+        }
+
+        /* Stile per le date */
+        .text-muted.small {
+            font-size: 0.8rem;
+        }
+
         /*// xs-no-padding è una classe custom per rimuovere il padding su schermi piccoli*/
         @media (max-width: 576px) {
             .xs-no-padding {
@@ -220,7 +261,7 @@
     <!-- Results Section -->
     <div class="results" style="display:none;">
         <!-- Stats Grid -->
-        <div class="row row-cols-1 row-cols-md-4 row-cols-sm-2 g-2 mb-4">
+        <div class="row row-cols-1 row-cols-md-4 row-cols-sm-2 g-2 mb-2">
             <div class="col">
                 <div class="stat-card">
                     <div class="d-flex align-items-center">
@@ -263,6 +304,42 @@
             </div>
         </div>
 
+        <!-- Card per Max Gain e Max Loss -->
+        <div class="row row-cols-1 row-cols-md-4 row-cols-sm-2 g-2 mb-3">
+            <div class="col">
+                <div class="card mb-4 max-gain-card">
+                    <div class="card-body py-2">
+                        <div class="d-flex align-items-center">
+                            <div>
+                                <h6 class="mb-0">Max Loss</h6>
+                                <div class="text-muted small" id="maxGainDate">-</div>
+                            </div>
+                            <div class="ms-2">
+                                <span class="stat-value-small" id="maxGainValue">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col">
+                <div class="col card mb-4 max-loss-card">
+                    <div class="card-body py-2">
+                        <div class="d-flex align-items-center ">
+                            <div>
+                                <h6 class="mb-0">Max Loss</h6>
+                                <div class="text-muted small" id="maxLossDate">-</div>
+                            </div>
+                            <div class="ms-2">
+                                <span class="stat-value-small" id="maxLossValue">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
         <!-- Chart Section -->
         <div class="card mb-4">
             <div class="card-body xs-no-padding">
@@ -303,20 +380,27 @@
                             <div>
 
                                 <h2>Cos'è questo strumento?</h2>
-                                <p>Attraverso questo strumento potrai visualizzare l'andamento dei tuoi investimenti
+                                <p>Attraverso questo strumento potrai visualizzare l'andamento dei tuoi
+                                    investimenti
                                     fatti su Directa nel corso del tempo.</p>
-                                <p>Purtroppo il grafico fornito da Directa nella sezione "Patimonio" include anche i
-                                    bonifici in entrata e uscita, il che rende difficile capire il Gain/Loss effettivo
+                                <p>Purtroppo il grafico fornito da Directa nella sezione "Patimonio" include
+                                    anche i
+                                    bonifici in entrata e uscita, il che rende difficile capire il Gain/Loss
+                                    effettivo
                                     dei propri investimeti</p>
                                 <p>Questo strumento ti permettera' di visualizzare quel grafico al netto dei
                                     movimenti </p>
 
 
                                 <h2>Come usare questo strumento?</h2>
-                                <h6>Nota: dovrai scaricare un file, importarlo, visualizzare un grafico... se hai un pc sotto mano probabilmente e' piu' comodo.</h6>
+                                <h6>Nota: dovrai scaricare un file, importarlo, visualizzare un grafico... se
+                                    hai un pc
+                                    sotto mano probabilmente e' piu' comodo.</h6>
                                 <ol>
                                     <li>Accedi al tuo conto Directa selezionando la piattaforma "Libera"</li>
-                                    <li>Naviga alla pagina con lo storico: "Conto" -> "Patrimonio" -> "Storico" (vedi immagine sotto)
+                                    <li>Naviga alla pagina con lo storico: "Conto" -> "Patrimonio" -> "Storico"
+                                        (vedi
+                                        immagine sotto)
                                     <li>Seleziona il periodo che ti interessa. Il massimo è 3 anni.</li>
                                 </ol>
                                 <img src="assets/first_step.png" alt="first step" class="w-100 mb-2">
@@ -348,23 +432,28 @@
                     <div id="collapseFaq" class="accordion-collapse collapse show">
                         <div class="accordion-body">
                             <h4>Q: I miei dati e la mia privacy sono rispettati?</h4>
-                            <p>A: Si, i dati vengono analizzati localmente sul tuo pc e non vengono condivisi con
+                            <p>A: Si, i dati vengono analizzati localmente sul tuo pc e non vengono condivisi
+                                con
                                 nessuno.
                             </p>
 
                             <p>Per totale trasparenza il codice di questo progetto è open source e disponibile<a
-                                    href="https://github.com/ilbonte/directa-analyzer" target="_blank"> qui</a></p>
+                                    href="https://github.com/ilbonte/directa-analyzer" target="_blank"> qui</a>
+                            </p>
 
                             <p>Se ti fa stare piu' tranquillo puoi anche modificare il csv scaricato da Directa
-                                togliendo le prime 6 righe che contengono alcune tue informazioni anagrafiche</p>
+                                togliendo le prime 6 righe che contengono alcune tue informazioni
+                                anagrafiche</p>
 
                             <h4>Q: Perché il valore di "Gain/Loss Totale" non corrisponde a quanto presente su
                                 Directa?</h4>
-                            <p>A: Il "Gain/Loss Totale" che vedi qua comprende anche quanto ottenuto dalle cedole e
+                            <p>A: Il "Gain/Loss Totale" che vedi qua comprende anche quanto ottenuto dalle
+                                cedole e
                                 dividendi, mentre Directa non lo include</p>
 
                             <h4>Q: Hai altre domande o vuoi lasciare un feeback?</h4>
-                            <p>A: Puoi farlo <a href="https://forms.gle/mXQzmeDaGarpvDn77" target="_blank">qua</a></p>
+                            <p>A: Puoi farlo <a href="https://forms.gle/mXQzmeDaGarpvDn77"
+                                                target="_blank">qua</a></p>
                         </div>
                     </div>
                 </div>
@@ -385,7 +474,8 @@
                     </div>
                     <div>
                         <h5 class="modal-title text-danger">Errore durante l'elaborazione</h5>
-                        <p class="text-muted mb-0">Il programmatore è una capra, inviali questo errore cosi che possa
+                        <p class="text-muted mb-0">Il programmatore è una capra, inviali questo errore cosi che
+                            possa
                             risolvere il problema</p>
                     </div>
                 </div>
