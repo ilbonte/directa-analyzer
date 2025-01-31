@@ -162,6 +162,15 @@
             height: 600px;
             width: 100%;
         }
+
+        /*// xs-no-padding è una classe custom per rimuovere il padding su schermi piccoli*/
+        @media (max-width: 576px) {
+            .xs-no-padding {
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -253,7 +262,7 @@
 
         <!-- Chart Section -->
         <div class="card mb-4">
-            <div class="card-body">
+            <div class="card-body xs-no-padding">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h5 class="card-title mb-0"><i class="fas fa-chart-area me-2"></i>Andamento Cumulativo</h5>
                     <div>
@@ -265,7 +274,7 @@
                         </button>
                     </div>
                 </div>
-                <div class="chart-container">
+                <div class="chart-container xs-no-padding">
                     <canvas id="gainLossChart"></canvas>
                 </div>
             </div>
@@ -290,7 +299,7 @@
                         <div class="accordion-body">
                             <div>
 
-                                <h2>Cos'e' questo strumento?</h2>
+                                <h2>Cos'è questo strumento?</h2>
                                 <p>Attraverso questo strumento potrai visualizzare l'andamento dei tuoi investimenti
                                     fatti su Directa nel corso del tempo.</p>
                                 <p>Purtroppo il grafico fornito da Directa nella sezione "Patimonio" include anche i
@@ -301,6 +310,7 @@
 
 
                                 <h2>Come usare questo strumento?</h2>
+                                <h6>Nota: dovrai scaricare un file, importarlo, visualizzare un grafico... se hai un pc sotto mano probabilmente e' piu' comodo.</h6>
                                 <ol>
                                     <li>Accedi al tuo conto Directa selezionando la piattaforma "Libera"</li>
                                     <li>Naviga alla pagina con lo storico: "Conto" -> "Patrimonio" -> "Storico" (vedi immagine sotto)
@@ -389,7 +399,6 @@
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
-<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>-->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.2.0/chartjs-plugin-zoom.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
@@ -397,7 +406,7 @@
         crossorigin="anonymous"></script>
 
 <script src="./portfolio.js"></script>
-<script src="./error-catcher.js"></script>
+<!--<script src="./error-catcher.js"></script>-->
 <script>
     let globalPortfolioData = [];
     let globalMovimentiData = [];
@@ -517,7 +526,6 @@
         });
 
         const alignedMovements = alignMovementDates(filteredPortfolioData, filteredMovimentiData);
-        console.log(alignedMovements)
         const stats = calculateStats(filteredPortfolioData, alignedMovements);
         displayResults(stats, alignedMovements);
     }
