@@ -105,7 +105,7 @@ function updateChart(dailyGains) {
                     pointRadius: 0,
                 },
                 {
-                    label: 'Investimenti Cumulativi',
+                    label: 'Movimenti Cumulativi',
                     data: dailyGains.map(day => day.cumulativeInvestment),
                     borderColor: 'rgb(255, 99, 132)',
                     tension: 0.1,
@@ -191,7 +191,7 @@ function updateChart(dailyGains) {
                     position: 'right',
                     title: {
                         display: true,
-                        text: 'Investimenti (€)',
+                        text: 'Movimenti (€)',
                         color: 'rgb(255, 99, 132)'
                     },
                     grid: {
