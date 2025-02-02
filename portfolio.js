@@ -1,41 +1,92 @@
 function alignMovementDates(portfolioData, movimentiData) {
-    // todo: controllare cosa succede se ho più movimenti simili in date vicine o lo stesso giorno
     const windowDays = 3;
+    const tolerance = 0.01;
     const alignedMovements = [];
 
     movimentiData.forEach(movement => {
         const movementDate = new Date(movement.date.split('/').reverse().join('-'));
         const movementValue = movement.value;
-        let foundMatch = false;
+        let bestExactMatch = null;
+        let bestClosestMatch = null;
+        let smallestDayDiff = Infinity;
 
         for (let i = 0; i < portfolioData.length - 1; i++) {
-            const currDate = new Date(portfolioData[i].date.split('/').reverse().join('-'));
-            const nextDate = new Date(portfolioData[i + 1].date.split('/').reverse().join('-'));
+            const currPortfolio = portfolioData[i];
+            const nextPortfolio = portfolioData[i + 1];
 
-            // Check if current portfolio date is within window of movement date
-            const daysDiff = Math.abs((currDate - movementDate) / (1000 * 60 * 60 * 24));
+            const currDate = new Date(currPortfolio.date.split('/').reverse().join('-'));
+            const daysDiff = Math.abs((currDate - movementDate) / (86400000));
 
-            if (daysDiff <= windowDays) {
-                const currLiq = portfolioData[i].liquidita;
-                const nextLiq = portfolioData[i + 1].liquidita;
-                const liquidityChange = nextLiq - currLiq;
+            if (daysDiff > windowDays) continue;
 
-                // Check if liquidity change matches movement value (with small tolerance)
-                const tolerance = 0.01;
-                if (Math.abs(liquidityChange - movementValue) <= tolerance) {
-                    alignedMovements.push({
-                        date: portfolioData[i + 1].date,
-                        value: movementValue,
-                        originalDate: movement.date
-                    });
-                    foundMatch = true;
-                    break;
-                }
+            // Calcola le variazioni
+            const liquidityChange = nextPortfolio.liquidita - currPortfolio.liquidita;
+            const finanziamentoChange = currPortfolio.finanziamento - nextPortfolio.finanziamento;
+            const totalChange = liquidityChange + finanziamentoChange;
+
+            // Verifica corrispondenze esatte
+            if (Math.abs(totalChange - movementValue) <= tolerance) {
+                bestExactMatch = {
+                    date: nextPortfolio.date,
+                    type: 'total',
+                    diff: Math.abs(totalChange - movementValue)
+                };
+                break; // Priorità massima, interrompe la ricerca
+            }
+
+            // Verifica corrispondenza solo liquidità
+            if (!bestExactMatch && Math.abs(liquidityChange - movementValue) <= tolerance) {
+                bestExactMatch = {
+                    date: nextPortfolio.date,
+                    type: 'liquidità',
+                    diff: Math.abs(liquidityChange - movementValue)
+                };
+            }
+
+            // Verifica corrispondenza solo finanziamento
+            if (!bestExactMatch && Math.abs(finanziamentoChange - movementValue) <= tolerance) {
+                bestExactMatch = {
+                    date: nextPortfolio.date,
+                    type: 'finanziamento',
+                    diff: Math.abs(finanziamentoChange - movementValue)
+                };
+            }
+
+            // Aggiorna la data più vicina
+            if (daysDiff < smallestDayDiff) {
+                smallestDayDiff = daysDiff;
+                bestClosestMatch = {
+                    date: currPortfolio.date,
+                    type: 'closest',
+                    diff: daysDiff
+                };
             }
         }
 
-        if (!foundMatch) {
-            console.log(`Warning: No matching liquidity change found for movement on ${movement.date} of ${movementValue.toFixed(2)}€`);
+        // Gestione risultati
+        if (bestExactMatch) {
+            alignedMovements.push({
+                date: bestExactMatch.date,
+                value: movementValue,
+                originalDate: movement.date,
+                matchedType: bestExactMatch.type
+            });
+        } else if (bestClosestMatch) {
+            alignedMovements.push({
+                date: bestClosestMatch.date,
+                value: movementValue,
+                originalDate: movement.date,
+                matchedType: bestClosestMatch.type
+            });
+            console.log(`Warning: No exact match for movement on ${movement.date} of ${movementValue}€. Assigned closest date ${bestClosestMatch.date}`);
+        } else {
+            alignedMovements.push({
+                date: movement.date,
+                value: movementValue,
+                originalDate: movement.date,
+                matchedType: 'none'
+            });
+            console.log(`Warning: No matching date found within window for movement on ${movement.date} of ${movementValue}€`);
         }
     });
 
@@ -268,6 +319,7 @@ function parseCSVContent(csvText) {
                 portfolioData.push({
                     date: columns[0].trim(),
                     liquidita: parseFloat(columns[1]),
+                    finanziamento: parseFloat(columns[2]),
                     patrimonio: parseFloat(columns[6])
                 });
             }
