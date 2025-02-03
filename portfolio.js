@@ -123,15 +123,38 @@ function calculateStats(portfolioData, alignedMovements) {
         }
         previousPatrimonio = day.patrimonio;
     });
-
+    // Calcolo del TWRR annualizzato
+    const twrr = calculateTWRR(dailyGains,portfolioData);
     return {
         dailyGains,
         totalGainLoss: cumulativeGainLoss,
         totalInvestments: cumulativeInvestment,
         patrimonyInitial: portfolioData[0].patrimonio,
         patrimonyFinal: portfolioData[portfolioData.length - 1].patrimonio,
-        totalMovements: alignedMovements.reduce((sum, m) => sum + m.value, 0)
+        totalMovements: alignedMovements.reduce((sum, m) => sum + m.value, 0),
+		twrr: twrr // Aggiungi il TWRR ai risultati
     };
+}
+
+function calculateTWRR(dailyGains,portfolioData) {
+    let product = 1;
+
+    dailyGains.forEach((day) => {
+            const dailyReturn = day.gainLoss / (day.cumulativeInvestment+portfolioData[0].patrimonio); // Ritorno giornaliero
+            product *= (1 + dailyReturn);      
+    });
+
+    // Calcola il ritorno totale
+    const totalReturn = product - 1;
+
+    // Se il periodo è inferiore a 365 giorni, non annualizzare
+    if (dailyGains.length < 365) {
+        return (totalReturn * 100).toFixed(2); // Ritorno totale come percentuale senza annualizzazione
+    } else {
+        // Annualizza il ritorno
+    const annualizedReturn = Math.pow(1 + totalReturn, 365 / dailyGains.length) - 1;
+        return (annualizedReturn * 100).toFixed(2); // Percentuale annualizzata
+    }
 }
 
 let chart = null;
@@ -264,6 +287,7 @@ function displayResults(stats) {
     $('#patrimonyFinal').text(formatCurrency(stats.patrimonyFinal));
     $('#totalMovements').text(formatCurrency(stats.totalMovements));
     $('#totalGainLoss').text(formatCurrency(stats.totalGainLoss));
+	$('#twrr').text(`${stats.twrr}%`); // Aggiungi il TWRR annualizzato
 
         // Trova il giorno con il massimo gain e il massimo loss
     const { maxGain, maxLoss } = findMaxGainAndLoss(stats.dailyGains);
